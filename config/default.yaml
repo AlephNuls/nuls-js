@@ -7,12 +7,12 @@ nuls:
       host: https://testnet.nuls.world
       base: ''
       resources:
-        utxos: /utxos/__ADDRESS__
-        balance: /balance/__ADDRESS__
+        utxos: /utxo/limit/__ADDRESS__/0
+        balance: /accountledger/balance/__ADDRESS__
         broadcast: /broadcast
-        lastHeight: /last-height/
-        block: /block/__HEIGHT_OR_HASH__?full=true
-        transaction: /transaction/__HASH__
+        lastHeight: /block/newest/height
+        block: /block/height/__HEIGHT_OR_HASH__?full=true
+        transaction: /tx/hash/__HASH__
         contractMethods: /contract/__ADDRESS__/methods
         contractView: /contract/__ADDRESS__/view
         contractCallGas: /contract/__ADDRESS__/call/gas

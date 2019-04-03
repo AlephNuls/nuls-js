@@ -1,5 +1,5 @@
 {
-  "name": "nuls-js",
+  "name": "@bitrabbit/nuls-js",
   "version": "1.1.01",
   "description": "Isomorphic JavaScript SDK for Nuls blockchain",
   "main": "dist/nuls-js.cjs.js",
@@ -31,7 +31,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/CCC-NULS/nuls-js"
+    "url": "https://github.com/ShiningRay/nuls-js"
   },
   "keywords": [
     "nuls",
