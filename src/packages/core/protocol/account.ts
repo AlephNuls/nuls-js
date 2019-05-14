@@ -9,7 +9,7 @@ import { getPrivateKeyBuffer, getXOR, sha256, ripemd160, isValidAddress } from '
 
 
 import { IAPIConfig } from '..';
-import { BalanceApi, /* ApiBalance */ } from '../api/balance';
+import { BalanceApi } from '../api/balance';
 
 const APIServerTestNet: IAPIConfig = {
 	host: 'https://explorer.nuls.services',
@@ -74,6 +74,7 @@ export class Account {
 	/** Public key HEX Buffer */
 	private publicKeyBuffer: Buffer = Buffer.from([]);
 
+	/* Gets the balance of an address (Testnet only for now) */
 	public static async getBalance(address: string): Promise<Object> {
 		if(isValidAddress(address)){
 			let balanceApi = new BalanceApi(APIServerTestNet);
@@ -83,6 +84,7 @@ export class Account {
 		}
 	}
 
+	/* Gets the balance of this account (works for test net only) */
 	public async getBalance(): Promise<Object> {
 
 		if(isValidAddress(this.address)){
@@ -301,9 +303,6 @@ export class Account {
 
 	}
 
-	// constructor(public balanceApi: BalanceApi) { 
-	// 	balanceApi = new BalanceApi(APIServerTestNet);
-	// }
 	constructor() { }
 
 	public switchChain(chainId: ChainIdType) {
