@@ -9,12 +9,7 @@ import { getPrivateKeyBuffer, getXOR, sha256, ripemd160, isValidAddress } from '
 
 
 import { IAPIConfig } from '..';
-import { BalanceApi } from '../api/balance';
-
-const APIServerTestNet: IAPIConfig = {
-	host: 'https://explorer.nuls.services',
-	base: ''
-};
+import { AccountApi, ApiBalance } from '../api/account';
 
 export interface AccountObject {
 	address: string;
@@ -75,24 +70,18 @@ export class Account {
 	private publicKeyBuffer: Buffer = Buffer.from([]);
 
 	/* Gets the balance of an address (Testnet only for now) */
-	public static async getBalance(address: string): Promise<Object> {
+	public static async getBalance(address: string, iapiConfig: IAPIConfig): Promise<ApiBalance> {
 		if(isValidAddress(address)){
-			let balanceApi = new BalanceApi(APIServerTestNet);
-			return await balanceApi.balance(address);
+			let accountApi = new AccountApi(iapiConfig);
+			return await accountApi.getBalance(address);
 		} else {
 			throw new Error("Invalid Address Used!");
 		}
 	}
 
 	/* Gets the balance of this account (works for test net only) */
-	public async getBalance(): Promise<Object> {
-
-		if(isValidAddress(this.address)){
-			let balanceApi = new BalanceApi(APIServerTestNet);
-			return await balanceApi.balance(this.address);
-		} else {
-			throw new Error("Invalid Address Used!");
-		}
+	public async getBalance(iapiConfig:IAPIConfig): Promise<ApiBalance> {
+		return await Account.getBalance(this.address, iapiConfig);
 	}
 
 	/**

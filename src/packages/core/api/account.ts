@@ -7,13 +7,13 @@ export interface ApiBalance {
 	locked: number;
 }
 
-export class BalanceApi extends APIServerClass {
+export class AccountApi extends APIServerClass {
 
 	constructor(conf: IAPIConfig = config.nuls.api.explorer) {
 		super({ ...config.nuls.api.explorer, ...conf });
 	}
 
-	async balance(address): Promise<ApiBalance> {
+	async getBalance(address): Promise<ApiBalance> {
 
 		const resource: string = this.getResource('balance', address);
 

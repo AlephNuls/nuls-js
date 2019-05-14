@@ -13,12 +13,45 @@ describe('create new accounts', () => {
  
 	describe('valid private key', () => {
 
-		// describe('balance', () => {
+		describe('balance', () => {
 
-		// 	it('getting the balance of an account', () => {
+			it('getting the balance of an account', async () => {
 
-		// 	});
-		// });
+				// This API (explorer.nuls.services) doesn't currently work for new addresses
+				// If it would, this is what a test could look like:
+
+				// const account = Account.create();
+
+				// account.switchChain(ChainIdType.Testnet);
+				// let balance = await account.getBalance({host: 'https://explorer.nuls.services', base: ''});
+				// console.log(balance);
+
+				// expect(balance).toEqual({
+				// 	total: 0,
+				// 	locked: 0,
+				// 	usable: 0
+				// });
+
+				// Using a pre-defined address.. 
+
+				let address = 'TTatyig2SCtmUEsgguKvxQQ421e6NULS';
+				let balance = await Account.getBalance(address, {host: 'https://explorer.nuls.services', base: ''});
+				let total = balance.total;
+				let locked = balance.locked;
+				let usable = balance.usable;
+
+				expect(locked + usable).toEqual(total);
+
+				expect(total).toBeGreaterThanOrEqual(0);
+				expect(locked).toBeGreaterThanOrEqual(0);
+				expect(usable).toBeGreaterThanOrEqual(0);
+
+				expect(total).toBeLessThanOrEqual(10**45);
+				expect(locked).toBeLessThanOrEqual(10**45);
+				expect(usable).toBeLessThanOrEqual(10**45);
+
+			});
+		});
 
 		describe('create', () => {
 
