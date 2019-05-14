@@ -5,7 +5,16 @@ import Hex from 'crypto-js/enc-hex';
 import Base64 from 'crypto-js/enc-base64';
 
 import * as secp256k1 from 'secp256k1';
-import { getPrivateKeyBuffer, getXOR, sha256, ripemd160 } from '../utils';
+import { getPrivateKeyBuffer, getXOR, sha256, ripemd160, isValidAddress } from '../utils';
+
+
+import { IAPIConfig } from '..';
+import { BalanceApi, /* ApiBalance */ } from '../api/balance';
+
+const APIServerTestNet: IAPIConfig = {
+	host: 'https://explorer.nuls.services',
+	base: ''
+};
 
 export interface AccountObject {
 	address: string;
@@ -64,6 +73,25 @@ export class Account {
 
 	/** Public key HEX Buffer */
 	private publicKeyBuffer: Buffer = Buffer.from([]);
+
+	public static async getBalance(address: string): Promise<Object> {
+		if(isValidAddress(address)){
+			let balanceApi = new BalanceApi(APIServerTestNet);
+			return await balanceApi.balance(address);
+		} else {
+			throw new Error("Invalid Address Used!");
+		}
+	}
+
+	public async getBalance(): Promise<Object> {
+
+		if(isValidAddress(this.address)){
+			let balanceApi = new BalanceApi(APIServerTestNet);
+			return await balanceApi.balance(this.address);
+		} else {
+			throw new Error("Invalid Address Used!");
+		}
+	}
 
 	/**
 	 * This will loop around until it finds a matching address
@@ -273,6 +301,9 @@ export class Account {
 
 	}
 
+	// constructor(public balanceApi: BalanceApi) { 
+	// 	balanceApi = new BalanceApi(APIServerTestNet);
+	// }
 	constructor() { }
 
 	public switchChain(chainId: ChainIdType) {

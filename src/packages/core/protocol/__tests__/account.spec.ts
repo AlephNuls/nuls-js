@@ -13,6 +13,21 @@ describe('create new accounts', () => {
  
 	describe('valid private key', () => {
 
+		describe('balance', () => {
+
+			it('getting the balance of an account', () => {
+
+				console.log("Balance of default account: ");	
+				console.log(Account.getBalance());//.then((res) => console.log(res));
+
+				console.log("Balance of another account: ");	
+
+				console.log(Account.getBalance('TTatyig2SCtmUEsgguKvxQQ421e6NULS'));//.then((res) => console.log(res));
+				
+				expect(1 == 1);
+			});
+		});
+
 		describe('create', () => {
 
 			it('creating a new account', () => {
