@@ -1,6 +1,11 @@
 export const HASH_LENGTH = 34;
 export const ADDRESS_LENGTH = 23;
+export const DEFAULT_ADDRESS_TYPE = 1;
+export const CONTRACT_ADDRESS_TYPE = 2;
 export const P2SH_ADDRESS_TYPE = 3;
+
+export const MAIN_NET_VERSION = 1;
+
 export const CONSENSUS_LOCK_TIME = -1;
 
 export const BLACK_HOLE_ADDRESS = 'Nse5FeeiYk1opxdc5RqYpEWkiUDGNuLs';
