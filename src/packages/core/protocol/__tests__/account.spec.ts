@@ -31,14 +31,17 @@ describe('create new accounts', () => {
 				// 	locked: 0,
 				// 	usable: 0
 				// });
+				// Using a pre-defined address..
 
-				// Using a pre-defined address.. 
+				const resp = {total: 9999999999999, locked: 0, usable: 9999999999999};
 
-				let address = 'TTatyig2SCtmUEsgguKvxQQ421e6NULS';
-				let balance = await Account.getBalance(address, {host: 'https://explorer.nuls.services', base: ''});
-				let total = balance.total;
-				let locked = balance.locked;
-				let usable = balance.usable;
+				Account.getBalance = jest.fn((a, b) => {return Promise.resolve(resp)});
+
+				const address = 'TTatyig2SCtmUEsgguKvxQQ421e6NULS';
+				const balance = await Account.getBalance(address, {host: 'https://explorer.nuls.services', base: ''});
+				const total = balance.total;
+				const locked = balance.locked;
+				const usable = balance.usable;
 
 				expect(locked + usable).toEqual(total);
 

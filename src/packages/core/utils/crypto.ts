@@ -4,11 +4,11 @@ import * as secp256k1 from 'secp256k1';
 import * as shajs from 'sha.js';
 import { 
   HASH_LENGTH, 
-  ADDRESS_LENGTH, 
-  P2SH_ADDRESS_TYPE,
-  DEFAULT_ADDRESS_TYPE, 
-  CONTRACT_ADDRESS_TYPE,
+  ADDRESS_LENGTH,
   } from '../common';
+
+import { AddressType, ChainIdType } from '../protocol/account';
+
 import { isHex } from './serialize';
 
 export const PRIVATE_KEY_LENGTH = 64;
@@ -82,20 +82,17 @@ export function isValidAddress(address: string): boolean {
 
   try {
     chainId = bytes.readInt16LE(0);
-    //bytes.readInt16LE(0);
     type = bytes.readInt8(2);
-    //console.log("Chain ID is ");
-    //console.log(chainId);
-    //console.log("Type is ");
-    //console.log(type);
   } catch {
     return false;
   }
-  
-  if (DEFAULT_ADDRESS_TYPE != type && CONTRACT_ADDRESS_TYPE != type && P2SH_ADDRESS_TYPE != type) {
-      return false;
-  }
 
+  if (Object.keys(ChainIdType).map(k => ChainIdType[k as any]).map(v => v as any).indexOf(chainId) === -1){
+    return false;
+  }
+  if (Object.keys(AddressType).map(k => AddressType[k as any]).map(v => v as any).indexOf(type) === -1) {
+    return false;
+  }
   try {
     checkXOR(bytes);
   } catch {
@@ -141,11 +138,11 @@ https://github.com/nuls-io/nuls/blob/b8e490a26eeec7b16d924d8398a67ede24ff86ca/co
 */
 export function checkXOR(hashs: Buffer) {
     
-    var body: Buffer = hashs.slice(0, ADDRESS_LENGTH);
-    let xor = getXOR(body);
+    const body: Buffer = hashs.slice(0, ADDRESS_LENGTH);
+    const xor = getXOR(body);
 
     if (xor != hashs[ADDRESS_LENGTH]) {
-        throw new Error('Nuls Runtime Exception: Data Error (10014)');
+        throw new Error("Address XOR doesn't check out.");
     }
 }
 

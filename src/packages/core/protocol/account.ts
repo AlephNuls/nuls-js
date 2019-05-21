@@ -20,7 +20,8 @@ export interface AccountObject {
 
 export enum AddressType {
 	Default = 1,
-	Contract = 2
+	Contract = 2,
+	P2SH	= 3
 }
 
 export enum ChainIdType {
