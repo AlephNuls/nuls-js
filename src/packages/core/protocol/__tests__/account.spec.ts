@@ -1,6 +1,7 @@
 import { Account, AddressType, ChainIdType, CustomAddressPosition } from '../../index';
 import { randomBytes } from 'crypto';
 import { publicKeyCreate, verify } from 'secp256k1';
+import axios from 'axios';
 
 jest.mock('crypto');
 jest.mock('secp256k1');
@@ -35,7 +36,10 @@ describe('create new accounts', () => {
 
 				const resp = {total: 9999999999999, locked: 0, usable: 9999999999999};
 
-				Account.getBalance = jest.fn((a, b) => {return Promise.resolve(resp)});
+				//Account.getBalance = jest.fn((a, b) => {});
+				jest.spyOn(axios, 'get').mockImplementation(() => {
+					return Promise.resolve(resp);
+				});
 
 				const address = 'TTatyig2SCtmUEsgguKvxQQ421e6NULS';
 				const balance = await Account.getBalance(address, {host: 'https://explorer.nuls.services', base: ''});

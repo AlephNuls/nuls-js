@@ -87,10 +87,10 @@ export function isValidAddress(address: string): boolean {
     return false;
   }
 
-  if (Object.keys(ChainIdType).map(k => ChainIdType[k as any]).map(v => v as any).indexOf(chainId) === -1){
+  if (Object.values(ChainIdType).indexOf(chainId) === -1){
     return false;
   }
-  if (Object.keys(AddressType).map(k => AddressType[k as any]).map(v => v as any).indexOf(type) === -1) {
+  if (Object.values(AddressType).indexOf(type) === -1) {
     return false;
   }
   try {
