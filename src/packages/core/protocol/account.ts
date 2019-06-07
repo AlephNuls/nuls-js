@@ -5,7 +5,11 @@ import Hex from 'crypto-js/enc-hex';
 import Base64 from 'crypto-js/enc-base64';
 
 import * as secp256k1 from 'secp256k1';
-import { getPrivateKeyBuffer, getXOR, sha256, ripemd160 } from '../utils';
+import { getPrivateKeyBuffer, getXOR, sha256, ripemd160, isValidAddress } from '../utils';
+
+
+import { IAPIConfig } from '..';
+import { AccountApi, ApiBalance } from '../api/account';
 
 export interface AccountObject {
 	address: string;
@@ -16,7 +20,8 @@ export interface AccountObject {
 
 export enum AddressType {
 	Default = 1,
-	Contract = 2
+	Contract = 2,
+	P2SH	= 3
 }
 
 export enum ChainIdType {
@@ -64,6 +69,21 @@ export class Account {
 
 	/** Public key HEX Buffer */
 	private publicKeyBuffer: Buffer = Buffer.from([]);
+
+	/* Gets the balance of an address (Testnet only for now) */
+	public static async getBalance(address: string, iapiConfig: IAPIConfig): Promise<ApiBalance> {
+		if(isValidAddress(address)){
+			let accountApi = new AccountApi(iapiConfig);
+			return await accountApi.getBalance(address);
+		} else {
+			throw new Error("Invalid Address Used!");
+		}
+	}
+
+	/* Gets the balance of this account (works for test net only) */
+	public async getBalance(iapiConfig:IAPIConfig): Promise<ApiBalance> {
+		return await Account.getBalance(this.address, iapiConfig);
+	}
 
 	/**
 	 * This will loop around until it finds a matching address

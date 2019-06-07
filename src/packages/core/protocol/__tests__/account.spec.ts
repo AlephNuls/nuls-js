@@ -1,9 +1,12 @@
 import { Account, AddressType, ChainIdType, CustomAddressPosition } from '../../index';
+//import { accountApiInstance } from '../../api/__mocks__/account';
+import * as accountModule from '../../api/account';
 import { randomBytes } from 'crypto';
 import { publicKeyCreate, verify } from 'secp256k1';
 
 jest.mock('crypto');
 jest.mock('secp256k1');
+jest.mock('../../api/account');
 
 describe('create new accounts', () => {
 
@@ -12,6 +15,40 @@ describe('create new accounts', () => {
 	});
  
 	describe('valid private key', () => {
+
+		describe('balance', () => {
+
+			it('getting the balance of an account', async () => {
+
+				// This API (explorer.nuls.services) doesn't currently work for new addresses
+				// If it would, this is what a test could look like:
+
+				// const account = Account.create();
+
+				// account.switchChain(ChainIdType.Testnet);
+				// let balance = await account.getBalance({host: 'https://explorer.nuls.services', base: ''});
+				// console.log(balance);
+
+				// expect(balance).toEqual({
+				// 	total: 0,
+				// 	locked: 0,
+				// 	usable: 0
+				// });
+				// Using a pre-defined address..
+
+				const accountApiInstance = new accountModule.AccountApi();
+				accountApiInstance.getBalance.mockResolvedValueOnce({total: 9999999999999, locked: 0, usable: 9999999999999});
+
+				const address = 'TTatyig2SCtmUEsgguKvxQQ421e6NULS';
+				const balance = await Account.getBalance(address, {host: 'https://explorer.nuls.services', base: ''});
+
+				expect(balance.locked + balance.usable).toEqual(balance.total);
+				expect(balance.total).toEqual(9999999999999);
+				expect(balance.locked).toEqual(0);
+				expect(balance.usable).toEqual(9999999999999);
+
+			});
+		});
 
 		describe('create', () => {
 

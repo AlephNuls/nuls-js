@@ -2,7 +2,13 @@ import * as bs58 from 'bs58';
 import RIPEMD160 from 'ripemd160';
 import * as secp256k1 from 'secp256k1';
 import * as shajs from 'sha.js';
-import { HASH_LENGTH } from '../common';
+import { 
+  HASH_LENGTH, 
+  ADDRESS_LENGTH,
+  } from '../common';
+
+import { AddressType, ChainIdType } from '../protocol/account';
+
 import { isHex } from './serialize';
 
 export const PRIVATE_KEY_LENGTH = 64;
@@ -53,9 +59,47 @@ export function isValidPrivateKey(privateKey: string): boolean {
 
 }
 
+/*
+https://github.com/nuls-io/nuls/blob/b8e490a26eeec7b16d924d8398a67ede24ff86ca/core-module/kernel/src/main/java/io/nuls/kernel/utils/AddressTool.java#L77-L117
+*/
 export function isValidAddress(address: string): boolean {
 
-  return /^(Ns|TT)([a-zA-Z-0-9]{30})$/.test(address);
+  if(!/^(Ns|TT)([a-zA-Z-0-9]{30})$/.test(address))
+    return false;
+  
+  let bytes: Buffer;
+
+  try {
+    bytes = Buffer.from(bs58.decode(address));
+    if(bytes.length != ADDRESS_LENGTH + 1)
+      return false;
+  } catch {
+    return false;
+  }
+  
+  let chainId: Number;
+  let type: Number;
+
+  try {
+    chainId = bytes.readInt16LE(0);
+    type = bytes.readInt8(2);
+  } catch {
+    return false;
+  }
+
+  if (Object.values(ChainIdType).indexOf(chainId) === -1){
+    return false;
+  }
+  if (Object.values(AddressType).indexOf(type) === -1) {
+    return false;
+  }
+  try {
+    checkXOR(bytes);
+  } catch {
+    return false;
+  } 
+
+  return true;
 
 }
 
@@ -87,6 +131,19 @@ export function getXOR(bytes: Buffer): number {
 
   return bytes.reduce((xor: number, value: number) => xor ^ value);
 
+}
+
+/* 
+https://github.com/nuls-io/nuls/blob/b8e490a26eeec7b16d924d8398a67ede24ff86ca/core-module/kernel/src/main/java/io/nuls/kernel/utils/AddressTool.java#L169-L183
+*/
+export function checkXOR(hashs: Buffer) {
+    
+    const body: Buffer = hashs.slice(0, ADDRESS_LENGTH);
+    const xor = getXOR(body);
+
+    if (xor != hashs[ADDRESS_LENGTH]) {
+        throw new Error("Address XOR doesn't check out.");
+    }
 }
 
 export function addressFromHash(hash: AddressHash): string {
