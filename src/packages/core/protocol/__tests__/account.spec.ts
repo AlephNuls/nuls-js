@@ -1,10 +1,12 @@
 import { Account, AddressType, ChainIdType, CustomAddressPosition } from '../../index';
+//import { accountApiInstance } from '../../api/__mocks__/account';
+import * as accountModule from '../../api/account';
 import { randomBytes } from 'crypto';
 import { publicKeyCreate, verify } from 'secp256k1';
-import axios from 'axios';
 
 jest.mock('crypto');
 jest.mock('secp256k1');
+jest.mock('../../api/account');
 
 describe('create new accounts', () => {
 
@@ -34,28 +36,16 @@ describe('create new accounts', () => {
 				// });
 				// Using a pre-defined address..
 
-				const resp = {total: 9999999999999, locked: 0, usable: 9999999999999};
-
-				//Account.getBalance = jest.fn((a, b) => {});
-				jest.spyOn(axios, 'get').mockImplementation(() => {
-					return Promise.resolve(resp);
-				});
+				const accountApiInstance = new accountModule.AccountApi();
+				accountApiInstance.getBalance.mockResolvedValueOnce({total: 9999999999999, locked: 0, usable: 9999999999999});
 
 				const address = 'TTatyig2SCtmUEsgguKvxQQ421e6NULS';
 				const balance = await Account.getBalance(address, {host: 'https://explorer.nuls.services', base: ''});
-				const total = balance.total;
-				const locked = balance.locked;
-				const usable = balance.usable;
 
-				expect(locked + usable).toEqual(total);
-
-				expect(total).toBeGreaterThanOrEqual(0);
-				expect(locked).toBeGreaterThanOrEqual(0);
-				expect(usable).toBeGreaterThanOrEqual(0);
-
-				expect(total).toBeLessThanOrEqual(10**45);
-				expect(locked).toBeLessThanOrEqual(10**45);
-				expect(usable).toBeLessThanOrEqual(10**45);
+				expect(balance.locked + balance.usable).toEqual(balance.total);
+				expect(balance.total).toEqual(9999999999999);
+				expect(balance.locked).toEqual(0);
+				expect(balance.usable).toEqual(9999999999999);
 
 			});
 		});

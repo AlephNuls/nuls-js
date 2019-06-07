@@ -1,6 +1,5 @@
 export const HASH_LENGTH = 34;
 export const ADDRESS_LENGTH = 23;
-export const MAIN_NET_VERSION = 1;
 
 export const CONSENSUS_LOCK_TIME = -1;
 
